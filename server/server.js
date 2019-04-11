@@ -1,7 +1,6 @@
 require('./config/config');
-
-const app = require('./routes/user');
 const mongoose = require('mongoose');
+const app = require('./routes'); // Import API routes.
 
 // Conexión con la base de datos.
 mongoose.connect(process.env.URL_DB, { useNewUrlParser: true,

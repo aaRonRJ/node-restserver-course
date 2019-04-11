@@ -1,5 +1,6 @@
 const express = require('express');
 const User = require('../models/user');
+const { verifyToken, verifyAdminRole } = require("../middlewares/authentication");
 const bodyParser = require('body-parser');
 const app = express();
 const bcrypt = require('bcrypt');
@@ -12,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Get users.
-app.get('/user', (req, res) => {
+app.get('/user', verifyToken, (req, res) => {
   let from = req.query.from || 0;
   from = Number(from);
 
@@ -43,7 +44,7 @@ app.get('/user', (req, res) => {
 });
 
 // Create user.
-app.post('/user', (req, res) => {
+app.post('/user', [verifyToken, verifyAdminRole], (req, res) => {
   let body = req.body;
 
   let user = new User({
@@ -69,7 +70,7 @@ app.post('/user', (req, res) => {
 });
 
 // Update user.
-app.put('/user/:id', (req, res) => {
+app.put('/user/:id', [verifyToken, verifyAdminRole], (req, res) => {
   let id = req.params.id;
   let body = _.pick(req.body, ['name', 'email', 'img', 'state', 'role']);
 
@@ -89,7 +90,7 @@ app.put('/user/:id', (req, res) => {
 });
 
 // Delete user.
-app.delete('/user/:id', (req, res) => {
+app.delete('/user/:id', [verifyToken, verifyAdminRole], (req, res) => {
   let id = req.params.id;
   let body = {
     state: false
